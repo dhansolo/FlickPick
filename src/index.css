@@ -16,10 +16,10 @@ code {
   text-align: center;
 }
 
-#picker-info {
+/* #picker-info {
   max-width: 500px;
   margin: auto;
-}
+} */
 
 #picker-info img {
   width: 300px;
@@ -34,7 +34,8 @@ code {
 }
 
 #button-group {
-  margin-left: 34%;
+  text-align: center;
+  margin-top: 5%;
 }
 
 #reject-button, #approve-button {
@@ -47,7 +48,18 @@ code {
   color: white;
 }
 
-#approve-button {
+#info-button {
   background-color: green;
   color: white;
+}
+
+#load {
+  margin-left: 45%;
+  margin-top: 45%;
+}
+
+#paper {
+  width: 500px;
+  height: 545px;
+  margin: auto;
 }
