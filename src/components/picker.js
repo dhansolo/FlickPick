@@ -13,8 +13,9 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 
-let page = Math.floor(Math.random() * 500);
+let page = Math.floor(Math.random() * 500) + 1;
 let selection = Math.floor(Math.random() * 20);
+
 let genre = null;
 
 class Picker extends React.Component {
@@ -23,23 +24,9 @@ class Picker extends React.Component {
         this.state =  {
             data: null
         }
-        this.handleInfo = this.handleInfo.bind(this);
-        this.handleReject = this.handleReject.bind(this);
-        this.handleGenreChange = this.handleGenreChange.bind(this);
     }
 
-    handleInfo(event) {
-        if(!this.state.data) { return; }
-    }
-
-    handleReject(event) {
-        if(!this.state.data) { return; }
-        this.setState({
-            data: null
-        })
-        page = Math.floor(Math.random() * 500);
-        selection = Math.floor(Math.random() * 20); 
-        console.log("genre to be submitted: " + genre)
+    getData = (page, selection, genre) => {
         axios({
             "method": "GET",
             "url": "https://api.themoviedb.org/3/discover/movie",
@@ -53,7 +40,7 @@ class Picker extends React.Component {
                 "include_adult": "false",
                 "include_video": "false",
                 "page": page,
-                "with_genres": genre
+                "with_genres": genre || null
             }
             })
             .then((response)=> {
@@ -65,42 +52,38 @@ class Picker extends React.Component {
             })
     }
 
-    handleGenreChange(event) {
+    handleInfo = (event) => {
+        if(!this.state.data) { return; }
+    }
+
+    handleReject = (event) => {
+        if(!this.state.data) { return; }
+        this.setState({
+            data: null
+        })
+        page = Math.floor(Math.random() * 500);
+        selection = Math.floor(Math.random() * 20); 
+        this.getData(page, selection, genre);
+        console.log("genre to be submitted: " + genre)
+    }
+
+    handleGenreChange = (event) => {
         genre = event.target.value;
         console.log(genre);
     }
 
-    componentDidMount() {
-        axios({
-            "method": "GET",
-            "url": "https://api.themoviedb.org/3/discover/movie",
-            "headers": {
-                "content-type": "application/json",
-                "access-control-allow-origin": "*",
-            }, "params": {
-                "api_key": process.env.REACT_APP_API_KEY,
-                "language":"en-US",
-                "sort_by": "popularity.desc",
-                "include_adult": "false",
-                "include_video": "false",
-                "page": page,
-                "with_genres": genre
-            }
-            })
-            .then((response)=> {
-                // console.log(response);
-                this.setState({ data: response.data.results[selection]})
-                // console.log(this.state.data);
-            })
-            .catch((error)=>{
-                console.log(error);
-            })
+    componentDidMount = () => {
+        this.getData(page, selection, genre);
     }
 
     render() {
         let poster;
         if(this.state.data) {
-            poster = "https://image.tmdb.org/t/p/w500/" + this.state.data.poster_path;
+            if(this.state.data.poster_path) {
+                poster = <img alt="poster" src={"https://image.tmdb.org/t/p/w500/" + this.state.data.poster_path}></img>
+            } else {
+                poster = <p id="poster-not-found">Poster not found</p>
+            }
         }
         if(this.state.data) {
             return (
@@ -109,6 +92,7 @@ class Picker extends React.Component {
                         <FormControl id="genre-dropdown">
                             <InputLabel>Genre</InputLabel>
                             <Select onChange={this.handleGenreChange}>
+                                <MenuItem value={undefined}>None</MenuItem>
                                 <MenuItem value={28}>Action</MenuItem>
                                 <MenuItem value={12}>Adventure</MenuItem>
                                 <MenuItem value={16}>Animation</MenuItem>
@@ -132,7 +116,7 @@ class Picker extends React.Component {
                         </FormControl>
                     </div>
                     <Paper elevation={24} id="paper">
-                        <img alt="poster" src={poster}></img>
+                        {poster}
                         <h2><b>{this.state.data.title}</b></h2>
                         <div id="rating">
                             <Rating defaultValue={this.state.data.vote_average} max={10} precision={0.5} size="small" readOnly></Rating>
