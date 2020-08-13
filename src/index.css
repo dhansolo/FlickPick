@@ -31,7 +31,7 @@ code {
 
 #picker-info img {
   width: 300px;
-  height: 400px;
+  height: 450px;
   margin-left: 20%;
   margin-top: 10px;
   border: 1px solid black;
@@ -97,6 +97,6 @@ code {
 
 #paper {
   width: 500px;
-  height: 545px;
+  height: 600px;
   margin: auto;
 }
