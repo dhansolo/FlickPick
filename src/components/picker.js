@@ -6,7 +6,7 @@ import Paper from '@material-ui/core/Paper';
 import Fab from '@material-ui/core/Fab';
 import InfoIcon from '@material-ui/icons/Info';
 import ClearIcon from '@material-ui/icons/Clear';
-// import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Rating from '@material-ui/lab/Rating';
 
 import FormControl from '@material-ui/core/FormControl';
@@ -14,23 +14,22 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 
+let data = null;
+
 let page = Math.floor(Math.random() * 500) + 1;
 let selection = Math.floor(Math.random() * 20);
-
 let url = "https://api.themoviedb.org/3/discover/movie"
 let genre = null;
-
-let posterElement = null;
-
-let rating = 0;
-let ratingElement = null;
 
 let Picker = () => {
     const [title, setTitle] = useState("");
     const [poster, setPoster] = useState(null);
+    const [rating, setRating] = useState(0);
 
-    let getData = (page, selection, genre, url) => {
-        axios({
+    let ratingElement = <Rating defaultValue={rating} max={10} precision={0.5} size="small" readOnly></Rating>;
+
+    let getData = async (page, selection, genre, url) => {
+        let config = {
             "method": "GET",
             "url": url,
             "headers": {
@@ -43,41 +42,52 @@ let Picker = () => {
                 "include_adult": "false",
                 "include_video": "false",
                 "page": page,
-                "with_genres": genre || null
+                "with_genres": genre
             }
-            })
-            .then((response)=> {
-                setTitle(response.data.results[selection].title);
-                setPoster(response.data.results[selection].poster_path);
-                rating = response.data.results[selection].vote_average;
-            })
-            .catch((error)=>{
-                console.log(error);
-            })
+        }
+        let response = await axios(config);
+        data = await response.data.results[selection];
+        setTitle(data.title);
+        setPoster(data.poster_path);
+        setRating(data.vote_average);
+        ratingElement = <Rating defaultValue={rating} max={10} precision={0.5} size="small" readOnly></Rating>;
+        console.log(ratingElement)
+        document.getElementById("rating").style.display = "block";
+        document.getElementById("poster").style.display = "inline";
     }
 
-    let handleInfo = (event) => {
+    let handleInfo = () => {
 
     }
 
-    let handleReject = (event) => {
+    let handleReject = async () => {
+        document.getElementById("poster").style.display = "none";
+        document.getElementById("rating").style.display = "none";
+        document.getElementById("load").style.display = "inline-block";
+        setTitle(null);
+        setPoster(null);
+        setRating(0);
+        ratingElement = null;
         page = Math.floor(Math.random() * 500);
         selection = Math.floor(Math.random() * 20); 
-        getData(page, selection, genre, url);
-        console.log("genre to be submitted: " + genre)
+        await getData(page, selection, genre, url);
+        setTitle(data.title);
+        setPoster(data.poster_path);
+        setRating(data.vote_average);
     }
 
     let handleGenreChange = (event) => {
         genre = event.target.value;
-        console.log(genre);
     }
 
     useEffect(() => {
-        getData(page, selection, genre, url);
+        console.log('called');
+        let makeReq = (async () => {
+            await getData(page, selection, genre, url); 
+            document.getElementById("load").style.display = "none";
+        });
+        makeReq();
     });
-
-    posterElement = <img alt="poster" src={`https://image.tmdb.org/t/p/w500${poster}`}></img>;
-    ratingElement = <Rating defaultValue={rating} max={10} precision={0.5} size="small" readOnly></Rating>
 
     return (
         <div id="picker-info">
@@ -109,8 +119,9 @@ let Picker = () => {
                 </FormControl>
             </div>
             <Paper elevation={24} id="paper">
+                <CircularProgress id="load"/>
                 <div>
-                    {posterElement}
+                    <img alt="poster" id="poster" src={`https://image.tmdb.org/t/p/w500${poster}`}></img>
                     <h2><strong>{title}</strong></h2>
                     <div id="rating">
                         {ratingElement}

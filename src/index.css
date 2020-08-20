@@ -57,10 +57,6 @@ code {
   line-height: 350px;
 }
 
-#rating {
-  text-align: center;
-}
-
 #params {
   text-align: center;
   margin-bottom: 10px;
@@ -99,4 +95,13 @@ code {
   width: 500px;
   height: 600px;
   margin: auto;
+}
+
+#poster {
+  display: none;
+}
+
+#rating {
+  display: none;
+  text-align: center;
 }
