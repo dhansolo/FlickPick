@@ -62,6 +62,19 @@ code {
   margin-bottom: 10px;
 }
 
+#params-modal {
+  position: absolute;
+  width: 300px;
+  height: 85px;
+  background-color: white;
+  color: white;
+  margin: auto;
+}
+
+#movie-radio, #show-radio{
+  display: inline-block;
+}
+
 #genre-dropdown {
   width: 100px;
 }
@@ -71,7 +84,7 @@ code {
   margin-top: 20px;
 }
 
-#reject-button, #approve-button {
+#reject-button, #approve-button, #options-button {
   margin-left: 10px;
   margin-right: 10px;
 }
