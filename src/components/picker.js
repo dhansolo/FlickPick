@@ -4,8 +4,7 @@ import axios from 'axios';
 
 import Paper from '@material-ui/core/Paper';
 import Fab from '@material-ui/core/Fab';
-import InfoIcon from '@material-ui/icons/Info';
-import ClearIcon from '@material-ui/icons/Clear';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import MenuIcon from '@material-ui/icons/Menu';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -60,10 +59,6 @@ let Picker = () => {
         document.getElementById("poster").style.display = "inline";
     }
 
-    let handleInfo = () => {
-
-    }
-
     let handleReject = async () => {
         document.getElementById("poster").style.display = "none";
         document.getElementById("rating").style.display = "none";
@@ -102,7 +97,7 @@ let Picker = () => {
     }
 
     useEffect(() => {
-        console.log('called');
+        // console.log('called');
         let makeReq = (async () => {
             await getData(page, selection, genre, url); 
             document.getElementById("load").style.display = "none";
@@ -124,10 +119,7 @@ let Picker = () => {
             </Paper>
             <div id="button-group">
                 <Fab id="reject-button" onClick={handleReject}>
-                    <ClearIcon />
-                </Fab>
-                <Fab id='info-button' onClick={handleInfo}>
-                    <InfoIcon />
+                    <RefreshIcon />
                 </Fab>
                 <Fab id='options-button' onClick={handleOpen}>
                     <MenuIcon />
